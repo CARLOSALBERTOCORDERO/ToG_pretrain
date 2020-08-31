@@ -30,7 +30,7 @@ trainDB = currentPath + os.sep + "dataset" + os.sep + "train20"
 valDB = currentPath + os.sep + "dataset"+ os.sep +"val20"
 batch_size = 10
 
-model_name = "DenseNet161Model"
+model_name = "XceptionModel"
 classList = os.listdir(trainDB)
 
 evaluationTrainDBFile = model_name + "traindb.csv"
@@ -42,7 +42,7 @@ evaluationAccValDBFile = model_name + "Accvaldb.csv"
 img = mpimg.imread(trainDB + os.sep + "stadium" + os.sep + "stadium_449_5_msrgb.jpg")
 imgplot = plt.imshow(img)
 
-img_rows, img_cols, img_channel = 224, 224, 3
+img_rows, img_cols, img_channel = 299, 299, 3
 num_categories = len(classList)
 
 train_data_gen = ImageDataGenerator()
@@ -198,9 +198,14 @@ def plot_confusion_matrix(cm, classes,
 
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
         if(0.0 != cm[i, j]):
-            plt.text(j, i, float("{:.3f}".format(cm[i, j])),
-                     horizontalalignment="center",
-                     color="black")
+            if normalize:
+                plt.text(j, i, float("{:.3f}".format(cm[i, j])),
+                         horizontalalignment="center",
+                         color="black")
+            else:
+                plt.text(j, i, int(cm[i, j]),
+                         horizontalalignment="center",
+                         color="black")            
 
     plt.tight_layout()
     plt.ylabel('True label')
@@ -213,10 +218,10 @@ np.set_printoptions(precision=2)
 # Plot non-normalized confusion matrix
 plt.figure()
 plot_confusion_matrix(cnf_matrix, classes=class_names,
-                      title='Confusion matrix, without normalization')
+                      title='Confusion matrix, ' + model_name)
 
 # Plot normalized confusion matrix
 plt.figure()
 plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True,
-                      title='Normalized confusion matrix')
+                      title='Normalized confusion matrix, ' + model_name)
 plt.show()
